@@ -1,6 +1,9 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse
+
 from rango.models import *
+from rango.forms import *
 
 
 def index(request):
@@ -29,3 +32,47 @@ def show_category(request, category_name_slug):
         context_dict = {'category': None, 'pages': None}
 
     return render(request, 'rango/category.html', context=context_dict)
+
+
+def add_category(request):
+    form = CategoryForm()
+
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+
+        # Have we been provided with a valid form?
+        if form.is_valid():
+            # Save the new category to the database
+            form.save(commit=True)
+            return redirect('/rango/')
+        else:
+            # The supplied form has errors.
+            print(form.errors)
+
+    # Will handle the bad form, new form, or no form supplied cases
+    return render(request, 'rango/add_category.html', {'form': form})
+
+
+def add_page(request, category_name_slug):
+    form = PageForm()
+    try:
+        category = Category.objects.get(slug=category_name_slug)
+    except Category.DoesNotExist:
+        return redirect(f'/rango/')
+
+    if request.method == 'POST':
+        form = PageForm(request.POST)
+
+        # Have we been provided with a valid form?
+        if form.is_valid():
+            # Save the new category to the database
+            page = form.save(commit=False)
+            page.category = category
+            page.save()
+            return redirect(reverse('rango:show_category', kwargs={'category_name_slug': category_name_slug}))
+        else:
+            # The supplied form has errors.
+            print(form.errors)
+
+    # Will handle the bad form, new form, or no form supplied cases
+    return render(request, f'rango/add_page.html', {'category': category, 'form': form})
