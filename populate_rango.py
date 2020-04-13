@@ -58,7 +58,7 @@ def populate():
         likes = random.uniform(0, views)
         cat = add_category(c['Name'], likes=likes, views=views)
         for p in c['Pages']:
-            add_page(cat, p['title'], p['url'])
+            add_page(cat, p['title'], p['url'], views=random.uniform(0, 100))
 
 
 if __name__ == '__main__':
