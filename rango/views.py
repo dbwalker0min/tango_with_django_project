@@ -44,7 +44,7 @@ def add_category(request):
         if form.is_valid():
             # Save the new category to the database
             form.save(commit=True)
-            return redirect('/rango/')
+            return redirect(reverse('rango:index'))
         else:
             # The supplied form has errors.
             print(form.errors)
@@ -58,7 +58,7 @@ def add_page(request, category_name_slug):
     try:
         category = Category.objects.get(slug=category_name_slug)
     except Category.DoesNotExist:
-        return redirect(f'/rango/')
+        return redirect(reverse('rango:index'))
 
     if request.method == 'POST':
         form = PageForm(request.POST)
@@ -75,4 +75,4 @@ def add_page(request, category_name_slug):
             print(form.errors)
 
     # Will handle the bad form, new form, or no form supplied cases
-    return render(request, f'rango/add_page.html', {'category': category, 'form': form})
+    return render(request, 'rango/add_page.html', {'category': category, 'form': form})
