@@ -2,3 +2,4 @@
 /rangoenv/*
 !/rangoenv/pyvenv.cfg
 *.pyc
+/media

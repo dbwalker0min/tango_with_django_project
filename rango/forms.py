@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.models import User
 from rango.models import *
 from url_normalize import url_normalize
 
@@ -31,3 +32,16 @@ class PageForm(forms.ModelForm):
         cleaned_data['url'] = url_normalize(cleaned_data.get('url'), default_scheme='http')
         return cleaned_data
 
+
+class UserForm(forms.ModelForm):
+    password=forms.CharField(widget=forms.PasswordInput)
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password')
+
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ('website', 'picture')
